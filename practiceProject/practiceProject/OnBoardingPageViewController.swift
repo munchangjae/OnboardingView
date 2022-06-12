@@ -9,13 +9,20 @@ import UIKit
 
 class OnBoardingPageViewController: UIPageViewController {
 
-    
-    
     var Pages = [UIViewController]()
+    
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        makeData()
+        makebutton()
+        self.dataSource = self
+        
+    }
+    
+    func makeData() {
         let OnVC1 = OnBoardingViewController(nibName: "OnBoardingViewController", bundle: nil)
         OnVC1.topImage = "onboard1"
         OnVC1.topTitle = "Welcome To Apple Education"
@@ -37,17 +44,31 @@ class OnBoardingPageViewController: UIPageViewController {
         Pages.append(OnVC2)
         Pages.append(OnVC3)
         
-        
-        self.dataSource = self
-        
         setViewControllers([OnVC1], direction: .forward, animated: true)
-        
-        
     }
-    
 
+    func makebutton() {
+        
+        let button = UIButton()
+        button.setTitle("닫기", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = .blue
+        button.addTarget(self, action: #selector(dismissbutton), for: .touchUpInside)
+        
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        button.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        button.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+        button.rightAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+        button.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        button.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor, constant: 0).isActive = true
+        
+        self.view.addSubview(button)
+    }
 
-
+    @objc func dismissbutton() {
+        self.dismiss(animated: true)
+    }
 }
 
 extension OnBoardingPageViewController: UIPageViewControllerDataSource {
