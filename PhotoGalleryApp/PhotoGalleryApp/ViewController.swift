@@ -51,6 +51,31 @@ class ViewController: UIViewController {
     
     
   
+
+
+    @objc func refreshImage() {
+        
+    }
+    
+    
+    @objc func checkPermission() {
+        if PHPhotoLibrary.authorizationStatus() == .authorized || PHPhotoLibrary.authorizationStatus() == .limited { // 포토라이브러리 허가 상태가 허가됐거나 제한적 허가상태면 갤러리 연다.
+            DispatchQueue.main.async {
+                self.showGallery()
+            }
+            
+        } else if PHPhotoLibrary.authorizationStatus() == .denied { // 거부되어있으면 설정으로 열게한다.
+            DispatchQueue.main.async {
+                self.showAuthorizationDeniedAlert()
+            }
+        } else if PHPhotoLibrary.authorizationStatus() == .notDetermined{
+            PHPhotoLibrary.requestAuthorization{ status in
+                self.checkPermission() // 체크 퍼미션 안에서 체크 퍼미션이 재실행 되는 것이므로 나머지 로직들은 다른 쓰레드에서 계속 실행되고 있어야함. ui변경 작동 등등은 메인에서 일어나야함.
+            }
+        }
+        
+    }
+    
     @objc func showGallery() {
         let library = PHPhotoLibrary.shared()
         
@@ -62,42 +87,33 @@ class ViewController: UIViewController {
         present(picker, animated: true)
         
     }
-
-    @objc func refreshImage() {
+    
+    @objc func showAuthorizationDeniedAlert() {
+        let alert = UIAlertController(title: "포토라이브러리 접근 권한을 활성화 해주세요", message: nil, preferredStyle: .alert) // alert은 화면 가운데 탁 뜨는거 액션시트는 밑에서 올라오는거
         
-    }
-    
-    
-    @objc func checkPermission() {
-        if PHPhotoLibrary.authorizationStatus() == .authorized || PHPhotoLibrary.authorizationStatus() == .limited { // 포토라이브러리 허가 상태가 허가됐거나 제한적 허가상태면 갤러리 연다.
-            showGallery()
-        } else if PHPhotoLibrary.authorizationStatus() == .denied { // 거부되어있으면 설정으로 열게한다.
-            let alert = UIAlertController(title: "포토라이브러리 접근 권한을 활성화 해주세요", message: nil, preferredStyle: .alert) // alert은 화면 가운데 탁 뜨는거 액션시트는 밑에서 올라오는거
+        alert.addAction(UIAlertAction(title: "닫기", style: .cancel))
+        alert.addAction(UIAlertAction(title: "설정으로 가기", style: .default, handler: {
+            action in
             
-            alert.addAction(UIAlertAction(title: "닫기", style: .cancel))
-            alert.addAction(UIAlertAction(title: "설정으로 가기", style: .default, handler: {
-                action in
-                
-                guard let url = URL(string: UIApplication.openSettingsURLString) else {
-                    return
-                }
-                if UIApplication.shared.canOpenURL(url) {
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                }
-                
-                
-            }))
-            
-            
-            self.present(alert, animated: true)
-        } else if PHPhotoLibrary.authorizationStatus() == .notDetermined{
-            PHPhotoLibrary.requestAuthorization{ status in
-                self.checkPermission()
+            guard let url = URL(string: UIApplication.openSettingsURLString) else {
+                return
             }
-        }
+            if UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            }
+            
+            
+        }))
         
+        self.present(alert, animated: true)
     }
 }
+
+
+    
+
+
+
 
 extension ViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
