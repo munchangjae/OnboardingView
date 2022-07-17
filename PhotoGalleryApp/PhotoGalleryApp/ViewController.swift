@@ -79,6 +79,7 @@ class ViewController: UIViewController {
                 DispatchQueue.main.async {
                     self.showGallery()
                 }
+            
                 
             } else if PHPhotoLibrary.authorizationStatus() == .denied { // 거부되어있으면 설정으로 열게한다.
                 DispatchQueue.main.async {
