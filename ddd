@@ -1,0 +1,38 @@
+
+import Foundation
+import UIKit
+
+func how_many_pages(numbers: Int) -> Int {
+    
+    // 케이스 나누기 : 페이지 수가 9쪽 이하면 숫자가 9 이하 , 페이지 수가 10쪽 이상 99쪽 이하면 숫자 189 이하, 페이지 수가 100쪽 이상 999쪽 이하면 숫자 2889 이하
+    
+    var pages:Int = 0
+    
+    if numbers <= 9 {
+        
+        pages = numbers
+        
+    }else if numbers >= 10 && numbers <= 189 {
+        if numbers % 2 == 1 {
+            pages = ( numbers - 9 ) / 2 + 9
+        }else {
+            pages = 0
+        }
+        
+    }else if numbers >= 189 && numbers <= 2889 {
+        if numbers % 3 == 0 {
+            pages = ( numbers - 189 ) / 3 + 99
+        }else {
+            pages = 0
+        }
+        
+        
+    }
+    
+    return pages
+  }
+
+
+how_many_pages(numbers: 2010)
+
+
